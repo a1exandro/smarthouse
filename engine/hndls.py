@@ -27,7 +27,6 @@ class hndls:
 
 
     def callBack(self,event,args):
-        #print('callback func from %s with event %s and args %s'%(args['cId'],event,args))
         if event == self.base_mod.ev_cmd:
             self.cmdCb(args['msg'],1)
         if event == self.base_mod.ev_rcv:
@@ -93,6 +92,14 @@ class hndls:
             if thread['name'] == name:
                 return thread['id']
         return 0
+
+    def getAliveData(self):
+        data = ''
+        for thread in self.mods:
+            status = thread['obj'].getStatusData()
+            if (status):
+                data += status
+        return data
 
     def __init__(self,hndlCb,cmdCb):
         self.hndlCb = hndlCb

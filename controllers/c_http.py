@@ -6,6 +6,9 @@ import base_ctrl
 import threading
 import requests
 import time
+import json
+from engine import conf
+import os
 
 class http(base_ctrl.baseCtrl):
     cb = None
@@ -14,11 +17,12 @@ class http(base_ctrl.baseCtrl):
     inpThread = None
     lastReq = 0
 
-    a_user = 'admin'
-    a_pw = 'asdfq1'
-    reqUrl = 'http://dev.tbestway.com/d/cmd.php'
-    sleep_time = 30
-
+    a_user = conf.get('user','http_controller')
+    a_pw = conf.get('pw','http_controller')
+    reqUrl = conf.get('url','http_controller')
+    sleep_time = int(conf.get('sleep_time','http_controller'))
+    board_id = int(conf.get('board_id'))
+    timeout = int(conf.get('timeout','http_controller'))
 
     def __init__(self,callback,id):
         super().__init__()
@@ -41,7 +45,8 @@ class http(base_ctrl.baseCtrl):
 
     def run(self,args=0):
         self.runn = 1
-        self.send({'payload':{'cmd':'register'}})
+        data = {'version':conf.get('version')}
+        self.send({'payload':{'cmd':'register'},'msg':json.dumps(data)})
 
         self.inpThread = threading.Thread(target=self.keepAlive, args=())
         self.inpThread.start()
@@ -57,9 +62,8 @@ class http(base_ctrl.baseCtrl):
             while self.runn:
                 recv = self.send({})
                 #if time.time() - self.lastReq < self.sleep_time:    # если ждали меньше sleep_time, значит был ответ или ошибка
-                if not recv:                                    # если ждали меньше и нет ответа - ошибка, тогда спим, во избежании флуда
-                    time.sleep(self.sleep_time/2)
-                    print ('keep alive')
+                if recv != 1:                                    # если ждали меньше и нет ответа - ошибка, тогда спим, во избежании флуда
+                    time.sleep(self.sleep_time*10)
         except BaseException as e:
             print (str(e))
 
@@ -76,17 +80,28 @@ class http(base_ctrl.baseCtrl):
                 if 'msg' in msg:
                     msg['payload'] = {'cmd':'message'}
                 else:
-                    msg['payload'] = {'cmd':'ping'}
-            if not 'files' in msg: msg['files'] = {}
+                    aliveData = self.cb(base_ctrl.ev_getAliveData,'')
+                    if (aliveData):
+                        msg['payload'] = {'cmd':'message'}
+                        msg['msg'] = aliveData
+                    else:
+                        msg['payload'] = {'cmd':'ping'}
+            if not 'args' in msg:
+                msg['files_data'] = {}
+            else:
+                if not 'files' in msg['args']:
+                    msg['files_data'] = {}
+                else:
+                    msg['files_data'] = {}
+                    for file in msg['args']['files']:
+                        #print(msg['args'])
+                        msg['files_data'][os.path.basename(file)] = open(file,'rb')
+
             if not 'msg' in msg: msg['msg'] = ''
 
             msg['payload']['msg'] = msg['msg']
 
-            if (msg['payload']['cmd'] == 'ping'):
-                ret = self.postData(msg)
-            else:       # если данные, запускаем в потоке
-                sndThread = threading.Thread(target=self.postData, args=[msg])
-                sndThread.start()
+            ret = self.postData(msg)
 
         except BaseException as e:
             print (str(e))
@@ -94,8 +109,10 @@ class http(base_ctrl.baseCtrl):
 
     def postData(self,msg):
         try:
-            print('HTTP send: ' , msg)
-            r = requests.post(self.reqUrl, auth=(self.a_user,self.a_pw), data=msg['payload'] , files=msg['files'])
+            msg['payload']['board_id'] = self.board_id
+            if (msg['payload']['cmd'] != 'ping'):
+                print('HTTP send: ', msg)
+            r = requests.post(self.reqUrl, auth=(self.a_user,self.a_pw), data=msg['payload'] , files=msg['files_data'], timeout = self.timeout)
             if (r.status_code == 200):
                 self.lastReq = time.time()
                 if (len (r.text)):

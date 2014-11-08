@@ -6,8 +6,8 @@ import threading
 cm_runn = 0
 
 ################################
-ev_rcv = 0
-
+ev_rcv = 0  # recv data
+ev_getAliveData = 1
 ################################
 class baseCtrl (object):
     def __init__(self):
@@ -20,7 +20,7 @@ class baseCtrl (object):
         self.runn = 0
     def getInfo(self):
         return {'version': 'unknown','author':__author__}
-    def sendMsg(self,id,msg,args=0):
+    def sendMsg(self,id,msg,args={}):
         if self.runn == 0: return
         self.q.append({'id': id, 'msg': msg, 'args': args})
         if self.qLock.locked():

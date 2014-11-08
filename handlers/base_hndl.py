@@ -22,7 +22,7 @@ class baseHndl(object):
         self.runn = 0
     def getInfo(self):
         return {'version': 'unknown','author':__author__}
-    def sendMsg(self,msg,args=0):
+    def sendMsg(self,msg,args={}):
         if self.runn == 0: return
         self.q.append({'msg':msg.copy(),'args':args})
         if self.qLock.locked():
@@ -39,3 +39,5 @@ class baseHndl(object):
         else:
             self.qLock.acquire(1)
             return None
+    def getStatusData(self):
+        pass

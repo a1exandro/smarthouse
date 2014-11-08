@@ -5,9 +5,13 @@ inf = {'version':__version__,'author':__author__}
 commands = ['gpio']
 
 import base_hndl
-#import RPi.GPIO as GPIO
+import json
+try:
+    import RPi.GPIO as GPIO
+except:
+    print('RPi.GPIO not found',inf)
 
-class system(base_hndl.baseHndl):
+class h_gpio(base_hndl.baseHndl):
     cb = None
     runn = 0
     cId = 0
@@ -16,8 +20,11 @@ class system(base_hndl.baseHndl):
         super().__init__()
         self.cb = callback
         self.cId = id
-    #    GPIO.setmode(GPIO.BCM)
-        print('GPIO handler loaded',inf)
+        try:
+            GPIO.setmode(GPIO.BCM)
+            print('GPIO handler loaded',inf)
+        except:
+            print('Could not load GPIO module',inf)
 
     def onCommand (self,cmd,args):
         if cmd == base_hndl.cm_runn:
@@ -48,35 +55,47 @@ class system(base_hndl.baseHndl):
     def processMsg(self,data):
         if not data['msg']['type'] == 'text_cmd': return
         cmd = data['msg']['data']
+        jdata = {}
         if len(cmd) < 3: return
         try:
             if cmd[1] == 'set':
                 if len(cmd) < 4: return
                 if (cmd[2] == 'mode'):
+                    jdata['type'] = 'mode'
                     if (cmd[3] == 'board'):             # numbering mode
                         GPIO.setmode(GPIO.BOARD)
+                        jdata['data'] = 'board'
                     else:
                         GPIO.setmode(GPIO.BCM)
-                    data['msg']['msg'] = cmd[2] + ' ' + cmd[3]
+                        jdata['data'] = 'bcm'
+                    data['msg']['msg'] = json.dumps(jdata)
                     self.send(data['msg'])
                 else:
                     p = int(cmd[2][1:])
+                    jdata['type'] = 'port_val'
+                    jdata['port'] = p
                     if len(cmd) == 5 and cmd[3] == '=': # set pin
                         GPIO.output(p,int(cmd[4]))
-                        data['msg']['msg'] = cmd[2] + ' = ' + str(GPIO.input(p))
+                        jdata['data'] = GPIO.input(p)
+                        data['msg']['msg'] = json.dumps(jdata)
                         self.send(data['msg'])
                     else:                               # set pin direction
+                        jdata['type'] = 'direction'
+                        jdata['data'] = cmd[3]
                         if (cmd[3] == 'out'):
                             GPIO.setup(p,GPIO.OUT)
                         else:
                             GPIO.setup(p,GPIO.IN)
-                        data['msg']['msg'] = cmd[2]  + ' ' + cmd[3]
+                        data['msg']['msg'] = json.dumps(jdata)
                         self.send(data['msg'])
 
             elif (cmd[1] == 'get'):
                 p = int(cmd[2][1:])
+                jdata['type'] = 'port_val'
+                jdata['port'] = p
                 if len(cmd) == 3:
-                    data['msg']['msg'] = cmd[2] + ' = ' + str(GPIO.input(p))
+                    jdata['data'] = GPIO.input(p)
+                    data['msg']['msg'] = json.dumps(jdata)
                     self.send(data['msg'])
         except BaseException as e:
             data['msg']['msg'] = str(e)

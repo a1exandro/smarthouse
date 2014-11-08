@@ -9,8 +9,9 @@ import subprocess
 import zipfile
 import os.path
 import requests
+from engine import conf
 
-class system(base_hndl.baseHndl):
+class h_system(base_hndl.baseHndl):
     cb = None
     runn = 0
     cId = 0
@@ -67,8 +68,16 @@ class system(base_hndl.baseHndl):
         self.cb(base_hndl.ev_rcv,msg)
 
     def update(self,cmd):
+        a_user = conf.get('user','http_controller')
+        a_pw = conf.get('pw','http_controller')
+        timeout = int(conf.get('timeout','http_controller'))
+
         url = " ".join(cmd)
-        r = requests.get(url)
+
+        r = requests.get(url, auth=(a_user,a_pw),timeout = timeout)
+
+        #if (r.code != 200):
+        #    return
 
         fd = open('update.zip','wb')
         fd.write(r.content)

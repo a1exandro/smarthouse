@@ -1,40 +1,33 @@
 __author__ = 'a1ex!'
 
-import configparser
-
-cfg = configparser.ConfigParser()
-s_cfg = {}
+from engine import globals
 
 def init(l_cfg):
-    global s_cfg,cfg
-    s_cfg = l_cfg.copy()
     try:
-        cfg.read(s_cfg['cfg_path'])
+        globals.cfgParser.read(globals.cfg['cfg_path'])
+        set('version',l_cfg['version'])
     except BaseException as e:
         print (str(e))
 
 def get(name,folder='main'):
-    global cfg
     r = ''
     try:
-        r = cfg[folder][name]
+        r = globals.cfgParser.get(folder,name)
     finally:
         return r
 
 def set(name,val,folder='main'):
-    global cfg,s_cfg
     try:
-        if not folder in cfg: cfg[folder] = {}
-        cfg[folder][name] = val
+        if not folder in globals.cfgParser: globals.cfgParser[folder] = {}
+        globals.cfgParser[folder][name] = val
     except BaseException as e:
         print (str(e))
 
 
 def close():
-    global s_cfg,cfg
     try:
-        with open(s_cfg['cfg_path'], 'w') as configfile:
-            cfg.write(configfile)
+        with open(globals.cfg['cfg_path'], 'w') as configfile:
+            globals.cfgParser.write(configfile)
     except BaseException as e:
         print (str(e))
     finally:

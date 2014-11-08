@@ -6,7 +6,7 @@ inf = {'version':__version__,'author':__author__}
 import base_hndl
 import threading
 
-class echo(base_hndl.baseHndl):
+class h_echo(base_hndl.baseHndl):
     cb = None
     runn = 0
     cId = 0

@@ -2,7 +2,7 @@ from engine import ctrls, hndls
 import time,sys,os
 from engine import conf
 
-class TSystem:
+class System:
     cfg = {}
     runn = 0
     ctrlEng = None
@@ -17,12 +17,14 @@ class TSystem:
     def init(self):
         if not self.runn: return
 
-        self.ctrlEng = ctrls.ctrls(self.onControllerMessage)
+        self.hndlEng = hndls.hndls(self.onHandlerMessage,self.onHndlCommand)
+        self.hndlEng.loadMods(self.cfg['hndl_dir'])
+		
+        self.ctrlEng = ctrls.ctrls(self.onControllerMessage,self.onCtrlCommand)
         self.ctrlEng.loadMods(self.cfg['mod_dir'])
 
-        self.hndlEng = hndls.hndls(self.onHandlerMessage,self.onCommand)
-        self.hndlEng.loadMods(self.cfg['hndl_dir'])
-        engn = engine(self.hndlEng,self.ctrlEng)
+        self.clearTmp()
+
         while (self.runn):
             time.sleep(1)
 
@@ -32,19 +34,27 @@ class TSystem:
 
             packetData = msg['msg'].split(';')
             for m in packetData:
+                m = m.strip()
+                msg['msg'] = m
                 msg['data'] = m.split(' ')
-                msg['msg'] = m.strip()
                 if len(msg['msg']):
                     self.hndlEng.sendMsg(msg)
         except BaseException as e:
             print (str(e))
+
     def onHandlerMessage(self,msg):
         try:
             self.ctrlEng.sendMsg(msg)
         except BaseException as e:
             print (str(e))
 
-    def onCommand(self,cmd,args):
+    def onCtrlCommand(self,cmd,args):
+        try:
+            return self.hndlEng.getAliveData()
+        except BaseException as e:
+            print (str(e))
+
+    def onHndlCommand(self,cmd,args):
         if cmd == 'exit' and args == 1:
             self.close()
         elif cmd == 'reload modules':
@@ -54,8 +64,7 @@ class TSystem:
         elif cmd == 'restart':
             self.close()
             python = sys.executable
-            #p = '\"\"'+python+'\"\"'
-            #python = r'C:\Program Files (x86)\Python 3.3\python.exe'
+
             os.execl(python,python, * sys.argv)
 
     def close(self):
@@ -67,13 +76,11 @@ class TSystem:
         except BaseException as e:
             print (str(e))
 
-
-class engine:
-    hndlrs = None
-    ctrls = None
-    def __init__(self,handlers,controllers):
-        self.hndlrs = handlers
-        self.ctrls = controllers
-
+    def clearTmp(self):
+        try:
+            for files in os.listdir('./tmp'):
+                os.remove('./tmp/'+files)
+        except BaseException as e:
+            print (str(e))
 
 

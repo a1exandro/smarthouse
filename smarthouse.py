@@ -12,7 +12,7 @@ import sys
 def main():
     sys.path.append('engine')
     cfg = {'mod_dir':mod_dir,'hndl_dir':hndl_dir,'cfg_path':'config.cfg','version':__version__}
-    engn = system.TSystem(cfg)
+    engn = system.System(cfg)
     engn.init()
     print('bye bye')
 

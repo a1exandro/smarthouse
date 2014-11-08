@@ -12,6 +12,7 @@ class ctrls:
     base_mod = None
 
     hndlCb = None
+    cmdCb = None
 
     def genId(self):
         find = False
@@ -27,6 +28,8 @@ class ctrls:
     def callBack(self,event,args):
         if event == self.base_mod.ev_rcv:
             self.hndlCb(args)
+        elif event == self.base_mod.ev_getAliveData:
+            return self.cmdCb(event,args)
 
     def reloadMods(self):
         for m in self.mods:
@@ -61,14 +64,18 @@ class ctrls:
         print('Done')
 
     def sendMsg(self,msg):
+        args = {}
+        if 'args' in msg:
+            args = msg['args']
+
         if (str(msg['cId']).isdigit()):
             if msg['cId'] == 0: # msg to everybody
                 for thread in self.mods:
-                    thread['obj'].sendMsg(msg['uId'],msg['msg'])
+                    thread['obj'].sendMsg(msg['uId'],msg['msg'],args)
             else:
                 for thread in self.mods:
                     if thread['id'] == msg['cId']:
-                        thread['obj'].sendMsg(msg['uId'],msg['msg'])
+                        thread['obj'].sendMsg(msg['uId'],msg['msg'],args)
                         break
         else:
             for thread in self.mods:
@@ -82,8 +89,9 @@ class ctrls:
                 return thread['id']
         return 0
 
-    def __init__(self,hndlCb):
+    def __init__(self,hndlCb, cmdCb):
         self.hndlCb = hndlCb
+        self.cmdCb = cmdCb
         print('Initializing controllers...')
 
 
