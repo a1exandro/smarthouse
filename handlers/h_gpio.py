@@ -2,14 +2,14 @@ __author__ = 'a1ex!'
 __version__ = '1.0'
 
 inf = {'version':__version__,'author':__author__}
-commands = ['gpio']
+commands = ['gpio', 'switches']
 
 import base_hndl
 import json
 try:
     import RPi.GPIO as GPIO
 except:
-    print('RPi.GPIO not found',inf)
+    print('RPi.GPIO not found')
 
 class h_gpio(base_hndl.baseHndl):
     cb = None
@@ -24,7 +24,7 @@ class h_gpio(base_hndl.baseHndl):
             GPIO.setmode(GPIO.BCM)
             print('GPIO handler loaded',inf)
         except:
-            print('Could not load GPIO module',inf)
+            print('Could not load GPIO module')
 
     def onCommand (self,cmd,args):
         if cmd == base_hndl.cm_runn:
