@@ -1,0 +1,7 @@
+#!/bin/bash
+# Autostart
+echo "Starting smarthouse..."
+mkdir /tmp/smarthouse
+cd /home/pi/smarthouse
+sudo python3 smarthouse.py 1 > /tmp/smarthouse/error.log 2 > /tmp/smarthouse/console.log &
+
