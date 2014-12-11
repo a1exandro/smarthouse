@@ -6,6 +6,8 @@ commands = ['gpio', 'switches']
 
 import base_hndl
 import json
+from engine import conf
+
 try:
     import RPi.GPIO as GPIO
 except:
@@ -70,6 +72,8 @@ class h_gpio(base_hndl.baseHndl):
                         jdata['data'] = 'bcm'
                     data['msg']['msg'] = json.dumps(jdata)
                     self.send(data['msg'])
+                elif (cmd[2] == 'cfg'):
+                    conf.setModuleCfg(' '.join(cmd[3:]))
                 else:
                     p = int(cmd[2][1:])
                     jdata['type'] = 'port_val'
@@ -90,13 +94,21 @@ class h_gpio(base_hndl.baseHndl):
                         self.send(data['msg'])
 
             elif (cmd[1] == 'get'):
-                p = int(cmd[2][1:])
-                jdata['type'] = 'port_val'
-                jdata['port'] = p
-                if len(cmd) == 3:
-                    jdata['data'] = GPIO.input(p)
-                    data['msg']['msg'] = json.dumps(jdata)
-                    self.send(data['msg'])
+                if (cmd[2] == 'cfg'):
+                    cfg = conf.getModuleCfg()
+                    if cfg:
+                        jdata['type'] = 'cfg'
+                        jdata['data'] = cfg
+                        data['msg']['msg'] = json.dumps(jdata)
+                        self.send(data['msg'])
+                else:
+                    p = int(cmd[2][1:])
+                    jdata['type'] = 'port_val'
+                    jdata['port'] = p
+                    if len(cmd) == 3:
+                        jdata['data'] = GPIO.input(p)
+                        data['msg']['msg'] = json.dumps(jdata)
+                        self.send(data['msg'])
         except BaseException as e:
             data['msg']['msg'] = str(e)
             self.send(data['msg'])

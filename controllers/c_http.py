@@ -4,7 +4,10 @@ __version__ = '1.0'
 inf = {'version':__version__,'author':__author__}
 import base_ctrl
 import threading
-import requests
+try:
+    import requests
+except:
+    print('could not load requests lib')
 import time
 import json
 from engine import conf

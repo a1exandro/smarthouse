@@ -57,6 +57,7 @@ class h_sensors(base_hndl.baseHndl):
     #sensors get list
 
     def processMsg(self,data):
+        jdata = {}
         if not data['msg']['type'] == 'text_cmd':
             return
         cmd = data['msg']['data']
@@ -65,7 +66,14 @@ class h_sensors(base_hndl.baseHndl):
         try:
             if (cmd[1] == 'get'):
                 if (len(cmd) > 2):
-                    if (cmd[2] == 'list'):
+                    if (cmd[2] == 'cfg'):
+                        cfg = conf.getModuleCfg()
+                        if cfg:
+                            jdata['type'] = 'cfg'
+                            jdata['data'] = cfg
+                            data['msg']['msg'] = json.dumps(jdata)
+                            self.send(data['msg'])
+                    elif (cmd[2] == 'list'):
                         data['msg']['msg'] = self.getList()
                         self.send(data['msg'])
                     else:
@@ -73,6 +81,9 @@ class h_sensors(base_hndl.baseHndl):
                         self.send(data['msg'])
             elif (cmd[1] == 'track'):
                 self.addTrackedSensor(cmd[2])
+            elif (cmd[1] == 'set'):
+                if (cmd[2] == 'cfg'):
+                    conf.setModuleCfg(' '.join(cmd[3:]))
 
         except BaseException as e:
             data['msg']['msg'] = str(e)

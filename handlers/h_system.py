@@ -8,7 +8,10 @@ import base_hndl
 import subprocess
 import zipfile
 import os.path
-import requests
+try:
+    import requests
+except:
+    print ('could not load requests lib')
 from engine import conf
 
 class h_system(base_hndl.baseHndl):

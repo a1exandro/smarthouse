@@ -1,6 +1,7 @@
 __author__ = 'a1ex!'
 
 from engine import globals
+import inspect
 
 def init(l_cfg):
     try:
@@ -18,11 +19,21 @@ def get(name,folder='main'):
 
 def set(name,val,folder='main'):
     try:
-        if not folder in globals.cfgParser: globals.cfgParser[folder] = {}
+        if folder not in globals.cfgParser:
+            globals.cfgParser[folder] = {}
         globals.cfgParser[folder][name] = val
     except BaseException as e:
         print (str(e))
 
+def setModuleCfg(val):
+    s = inspect.stack()
+    m_name = inspect.getmodulename(s[1][1])
+    set(m_name,val,'configs')
+
+def getModuleCfg():
+    s = inspect.stack()
+    m_name = inspect.getmodulename(s[1][1])
+    return get(m_name,'configs')
 
 def close():
     try:

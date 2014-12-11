@@ -7,8 +7,12 @@ import threading
 import subprocess
 from engine import conf
 from engine import mind
-import requests
+try:
+    import requests
+except:
+    print('could not load requests lib')
 import json
+
 
 class speech(base_ctrl.baseCtrl):
     cb = None
