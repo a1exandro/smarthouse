@@ -6,6 +6,7 @@ import base_ctrl
 import socket
 import threading
 from engine import conf
+import json
 
 class tcp_srv(base_ctrl.baseCtrl):
     cb = None
@@ -18,10 +19,13 @@ class tcp_srv(base_ctrl.baseCtrl):
         self.cb = callback
         self.cId = id
 
-        self.HOST = conf.get('tcp_controller_bind_addr')
+        self.HOST = conf.get('bind_addr','tcp_controller')
         if (not self.HOST): self.HOST = '0.0.0.0'
-        self.PORT = conf.get('tcp_controller_bind_port')
+        self.PORT = conf.get('bind_port','tcp_controller')
         if (not self.PORT): self.PORT = 1352
+
+        self.RMT_MIN_VERS  = conf.get('rmt_min_vers','tcp_controller')
+        if (not self.RMT_MIN_VERS): self.RMT_MIN_VERS = 1
 
         print('TCP controller loaded',inf)
 
@@ -51,9 +55,18 @@ class tcp_srv(base_ctrl.baseCtrl):
 
             inpThread = threading.Thread(target=self.recv_conn, args=())
             inpThread.start()
+
+            udpThread = threading.Thread(target=self.startUdpServer, args=())
+            udpThread.start()
+
         except BaseException as e:
             self.runn = 0
             print (str(e))
+
+        #t = 0
+       # while (t == 0):
+       #     pass
+        #self.sendUdpDiscover()
 
         while self.runn:
             it = self.popQueue()
@@ -88,7 +101,7 @@ class tcp_srv(base_ctrl.baseCtrl):
         except BaseException as e:
             print (str(e))
 
-    def send(self,msg):
+    def send(self, msg):
         try:
             for cl in self.clients:
                 if cl['addr'] == msg['id']:
@@ -96,5 +109,26 @@ class tcp_srv(base_ctrl.baseCtrl):
         except BaseException as e:
             print (str(e))
 
+    def startUdpServer(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
+        sock.bind((self.HOST, self.PORT))
 
+        while self.runn:
+           data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
+           jdata = json.loads(data)
+           try:
+                if jdata['id'] == "smhz" and jdata['vers'] >= self.RMT_MIN_VERS:
+                    jdata = {"id":"smhz"}
+                    jdata["board_id"] = int(conf.get('board_id'))
+                    sock.sendto(json.dumps(jdata).encode("utf-8"), (addr[0], addr[1]))
+           except:
+               continue
+        sock.close()
 
+    def sendUdpDiscover(self):
+        UDP_IP = "0.0.0.0"
+        UDP_PORT = 1353
+        MESSAGE = "wo0t?"
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
+        sock.bind((UDP_IP, UDP_PORT))
+        sock.sendto(MESSAGE.encode("utf-8"), ("127.0.0.1", 1352))

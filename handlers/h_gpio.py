@@ -24,6 +24,7 @@ class h_gpio(base_hndl.baseHndl):
         self.cId = id
         try:
             GPIO.setmode(GPIO.BCM)
+            self.onModuleCfgChanged()
             print('GPIO handler loaded',inf)
         except:
             print('Could not load GPIO module')
@@ -117,3 +118,7 @@ class h_gpio(base_hndl.baseHndl):
         msg['msg'] = 'GPIO: ' +  msg['msg']
         self.cb(base_hndl.ev_rcv,msg)
 
+    def onModuleCfgChanged(self):
+        cfg = json.loads(conf.getModuleCfg())
+        for sens in cfg['switches']:
+            GPIO.setup(sens['port'],GPIO.OUT)

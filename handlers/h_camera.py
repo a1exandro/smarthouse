@@ -53,20 +53,31 @@ class h_camera(base_hndl.baseHndl):
         jdata = {}
         if len(cmd) < 3: return
         try:
-            if (cmd[1] == 'get'):
-                p = int(cmd[2][1:])
-                jdata['type'] = 'picture'
-                jdata['addr'] = p
-                if len(cmd) >= 3:
-                    #jdata['data'] = GPIO.input(p)
-                    resolution = '640x480'
-                    if len(cmd) == 4: resolution = cmd[3]
-                    data['msg']['args'] = {}
-                    data['msg']['args']['files'] = self.getPicture(p,resolution)
-                    jdata['resolution'] = resolution
-                    jdata['fname'] = data['msg']['args']['files']
-                    data['msg']['msg'] = json.dumps(jdata)
-                    self.send(data['msg'])
+            if cmd[1] == 'set':
+                if (cmd[2] == 'cfg'):
+                    conf.setModuleCfg(' '.join(cmd[3:]))
+            elif (cmd[1] == 'get'):
+                if (cmd[2] == 'cfg'):
+                    cfg = conf.getModuleCfg()
+                    if cfg:
+                        jdata['type'] = 'cfg'
+                        jdata['data'] = cfg
+                        data['msg']['msg'] = json.dumps(jdata)
+                        self.send(data['msg'])
+                else:
+                    p = int(cmd[2][1:])
+                    jdata['type'] = 'picture'
+                    jdata['addr'] = p
+                    if len(cmd) >= 3:
+                        #jdata['data'] = GPIO.input(p)
+                        resolution = '640x480'
+                        if len(cmd) == 4: resolution = cmd[3]
+                        data['msg']['args'] = {}
+                        data['msg']['args']['files'] = self.getPicture(p,resolution)
+                        jdata['resolution'] = resolution
+                        jdata['fname'] = data['msg']['args']['files']
+                        data['msg']['msg'] = json.dumps(jdata)
+                        self.send(data['msg'])
         except BaseException as e:
             data['msg']['msg'] = str(e)
             self.send(data['msg'])

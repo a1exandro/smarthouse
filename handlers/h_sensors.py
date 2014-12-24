@@ -26,11 +26,14 @@ class h_sensors(base_hndl.baseHndl):
         super().__init__()
         self.cb = callback
         self.cId = id
-
-        os.system('modprobe w1-gpio')
-        os.system('modprobe w1-therm')
-        time.sleep(2)
-        print('SENSORS handler loaded',inf)
+        try:
+            os.system('modprobe w1-gpio')
+            os.system('modprobe w1-therm')
+            time.sleep(2)
+            self.onModuleCfgChanged()
+            print('SENSORS handler loaded',inf)
+        except:
+            print('Could not load SENSORS module')
 
     def onCommand (self,cmd,args):
         if cmd == base_hndl.cm_runn:
@@ -84,13 +87,14 @@ class h_sensors(base_hndl.baseHndl):
             elif (cmd[1] == 'set'):
                 if (cmd[2] == 'cfg'):
                     conf.setModuleCfg(' '.join(cmd[3:]))
+                    self.onModuleCfgChanged();
 
         except BaseException as e:
             data['msg']['msg'] = str(e)
             self.send(data['msg'])
 
     def send(self,msg):
-        msg['msg'] = 'SENSORS: ' +  msg['msg']
+        msg['msg'] = 'SENSORS: ' + msg['msg']
         self.cb(base_hndl.ev_rcv,msg)
 
     def addTrackedSensor(self, data):
@@ -105,25 +109,30 @@ class h_sensors(base_hndl.baseHndl):
             return self.getDigitalSens(a)
 
     def getDigitalSens(self,addr):
-        GPIO.setup(int(addr),GPIO.IN)
-        val = GPIO.input(int(addr))
+        try:
+            GPIO.setup(int(addr),GPIO.IN)
+            val = GPIO.input(int(addr))
+        except:
+            val = 0
         data = {'addr':addr,'data':val}
         data['type'] = 'D'
         return json.dumps(data)
 
     def getTempSens(self,addr):
-        t = "0"
+        t = 0
         fName = self.w1_dev_dir+'/'+addr+'/w1_slave'
-        f = open(fName)
-        if f:
-            sensData = f.read()
-            f.close()
+        try:
+            f = open(fName)
+            if f:
+                sensData = f.read()
+                f.close()
 
-            temp = re.findall(r't=([0-9]+)', sensData, re.DOTALL)
+                temp = re.findall(r't=([0-9]+)', sensData, re.DOTALL)
 
-            if len(temp):
-                t = float(temp[0])/1000
-
+                if len(temp):
+                    t = float(temp[0])/1000
+        except:
+            t = 0
         data = {'addr':addr,'data':t}
         data['type'] = 'T'
         return json.dumps(data)
@@ -152,3 +161,9 @@ class h_sensors(base_hndl.baseHndl):
             return 'SENSORS: ' + json.dumps(data)
         else:
             return None
+
+    def onModuleCfgChanged(self):
+        cfg = json.loads(conf.getModuleCfg())
+        self.trackedSens.clear()
+        for sens in cfg['sensors']:
+            self.addTrackedSensor(sens['type'] + sens['addr'])
