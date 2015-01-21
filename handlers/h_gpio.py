@@ -37,7 +37,7 @@ class h_gpio(base_hndl.baseHndl):
         return commands
 
     def terminate(self,args):
-        self.runn = args
+        self.runn = 0
         super().terminate()
 
     def getInfo(self):

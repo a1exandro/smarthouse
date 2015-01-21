@@ -35,7 +35,7 @@ class tcp_srv(base_ctrl.baseCtrl):
 
     def terminate(self,args):
         try:
-            self.runn = args
+            self.runn = 0
             for cl in self.clients:
                 cl['conn'].close()
             self.server_socket.close()

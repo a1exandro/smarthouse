@@ -23,7 +23,7 @@ class h_echo(base_hndl.baseHndl):
             self.terminate(args)
 
     def terminate(self,args):
-        self.runn = args
+        self.runn = 0
         super().terminate()
 
     def getInfo(self):

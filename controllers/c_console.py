@@ -21,7 +21,7 @@ class console(base_ctrl.baseCtrl):
             self.terminate(args)
 
     def terminate(self,args):
-        self.runn = args
+        self.runn = 0
         self.inpThread._stop()
         super().terminate()
 

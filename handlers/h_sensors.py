@@ -43,7 +43,7 @@ class h_sensors(base_hndl.baseHndl):
         return commands
 
     def terminate(self,args):
-        self.runn = args
+        self.runn = 0
         super().terminate()
 
     def getInfo(self):
@@ -108,17 +108,17 @@ class h_sensors(base_hndl.baseHndl):
         elif sensor[0] == 'D':
             return self.getDigitalSens(a)
 
-    def getDigitalSens(self,addr):
+    def getDigitalSens(self, addr):
         try:
             GPIO.setup(int(addr),GPIO.IN)
             val = GPIO.input(int(addr))
         except:
             val = 0
-        data = {'addr':addr,'data':val}
+        data = {'addr':addr, 'data':val}
         data['type'] = 'D'
         return json.dumps(data)
 
-    def getTempSens(self,addr):
+    def getTempSens(self, addr):
         t = 0
         fName = self.w1_dev_dir+'/'+addr+'/w1_slave'
         try:
@@ -164,6 +164,7 @@ class h_sensors(base_hndl.baseHndl):
 
     def onModuleCfgChanged(self):
         cfg = json.loads(conf.getModuleCfg())
-        self.trackedSens.clear()
+        #self.trackedSens.clear()
+        del self.trackedSens[:]
         for sens in cfg['sensors']:
             self.addTrackedSensor(sens['type'] + sens['addr'])

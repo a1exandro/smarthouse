@@ -41,7 +41,7 @@ class speech(base_ctrl.baseCtrl):
             self.terminate(args)
 
     def terminate(self,args):
-        self.runn = args
+        self.runn = 0
         self.inpThread._stop()
         super().terminate()
 
@@ -49,7 +49,7 @@ class speech(base_ctrl.baseCtrl):
         return inf
 
     def run(self,args=0):
-        self.runn = 1
+        self.runn = 0
         self.inpThread = threading.Thread(target=self.recv, args=())
         self.inpThread.start()
         while self.runn:
