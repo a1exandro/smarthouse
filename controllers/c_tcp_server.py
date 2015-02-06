@@ -115,7 +115,7 @@ class tcp_srv(base_ctrl.baseCtrl):
 
         while self.runn:
            data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
-           jdata = json.loads(data)
+           jdata = json.loads(data.decode("utf-8"))
            try:
                 if jdata['id'] == "smhz" and jdata['vers'] >= self.RMT_MIN_VERS:
                     jdata = {"id":"smhz"}
@@ -131,4 +131,4 @@ class tcp_srv(base_ctrl.baseCtrl):
         MESSAGE = "wo0t?"
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         sock.bind((UDP_IP, UDP_PORT))
-        sock.sendto(MESSAGE.encode("utf-8"), ("127.0.0.1", 1352))
+        sock.sendto(MESSAGE.encode("utf-8"), ("255.255.255.255", 1352))
