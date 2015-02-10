@@ -94,6 +94,8 @@ class h_sensors(base_hndl.baseHndl):
             self.send(data['msg'])
 
     def send(self,msg):
+        if msg['msg'] == None:
+            return
         msg['msg'] = 'SENSORS: ' + msg['msg']
         self.cb(base_hndl.ev_rcv,msg)
 

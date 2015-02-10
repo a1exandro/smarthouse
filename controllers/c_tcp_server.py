@@ -7,7 +7,7 @@ import socket
 import threading
 from engine import conf
 import json
-
+import struct
 class tcp_srv(base_ctrl.baseCtrl):
     cb = None
     runn = 0
@@ -89,7 +89,9 @@ class tcp_srv(base_ctrl.baseCtrl):
     def recv_data(self,conn,addr):
         try:
             while conn:
-                data = conn.recv(1024).decode("utf-8")
+                recvData = conn.recv(4)
+                dataLen = struct.unpack("!i",recvData)[0];
+                data = conn.recv(dataLen).decode("utf-8")
                 if not data: break
                 args = {'cId':self.cId,'uId':addr,'msg':data,'type':'text_cmd'}
                 self.cb(base_ctrl.ev_rcv,args)
@@ -105,6 +107,7 @@ class tcp_srv(base_ctrl.baseCtrl):
         try:
             for cl in self.clients:
                 if cl['addr'] == msg['id']:
+                    cl['conn'].send(struct.pack("!i",len(msg['msg'])))
                     cl['conn'].send(bytes(msg['msg'], 'UTF-8'))
         except BaseException as e:
             print (str(e))
