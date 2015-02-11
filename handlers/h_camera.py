@@ -76,6 +76,8 @@ class h_camera(base_hndl.baseHndl):
                         data['msg']['args']['files'] = self.getPicture(p,resolution)
                         jdata['resolution'] = resolution
                         jdata['fname'] = data['msg']['args']['files']
+                        #pic = open("/home/alex/hello",'rb')
+                        #jdata['data'] = pic.read()
                         data['msg']['msg'] = json.dumps(jdata)
                         self.send(data['msg'])
         except BaseException as e:

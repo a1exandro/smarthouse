@@ -78,7 +78,7 @@ class h_gpio(base_hndl.baseHndl):
                 else:
                     p = int(cmd[2][1:])
                     jdata['type'] = 'port_val'
-                    jdata['port'] = p
+                    jdata['addr'] = p
                     if len(cmd) == 5 and cmd[3] == '=': # set pin
                         GPIO.output(p,int(cmd[4]))
                         jdata['data'] = GPIO.input(p)
@@ -105,7 +105,7 @@ class h_gpio(base_hndl.baseHndl):
                 else:
                     p = int(cmd[2][1:])
                     jdata['type'] = 'port_val'
-                    jdata['port'] = p
+                    jdata['addr'] = p
                     if len(cmd) == 3:
                         jdata['data'] = GPIO.input(p)
                         data['msg']['msg'] = json.dumps(jdata)
@@ -115,10 +115,10 @@ class h_gpio(base_hndl.baseHndl):
             self.send(data['msg'])
 
     def send(self,msg):
-        msg['msg'] = 'GPIO: ' +  msg['msg']
+        msg['msg'] = 'SWITCHES: ' +  msg['msg']
         self.cb(base_hndl.ev_rcv,msg)
 
     def onModuleCfgChanged(self):
         cfg = json.loads(conf.getModuleCfg())
         for sens in cfg['switches']:
-            GPIO.setup(sens['port'],GPIO.OUT)
+            GPIO.setup(sens['addr'],GPIO.OUT)
