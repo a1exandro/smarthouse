@@ -1,3 +1,5 @@
+import os
+
 __author__ = 'a1ex!'
 __version__ = '1.0'
 
@@ -90,7 +92,7 @@ class tcp_srv(base_ctrl.baseCtrl):
         try:
             while conn:
                 recvData = conn.recv(4)
-                dataLen = struct.unpack("!i",recvData)[0];
+                dataLen = struct.unpack("!i",recvData)[0]
                 data = conn.recv(dataLen).decode("utf-8")
                 if not data: break
                 args = {'cId':self.cId,'uId':addr,'msg':data,'type':'text_cmd'}
@@ -107,8 +109,20 @@ class tcp_srv(base_ctrl.baseCtrl):
         try:
             for cl in self.clients:
                 if cl['addr'] == msg['id']:
-                    cl['conn'].send(struct.pack("!i",len(msg['msg'])))
-                    cl['conn'].send(bytes(msg['msg'], 'UTF-8'))
+                    fileData = None
+                    if 'args' in msg and 'files' in msg['args']:
+                        for file in msg['args']['files']:
+                            f = open(file,'rb')
+                            fileData = f.read()
+                            break   # TODO: add support multifile transfers
+                    fileLen = 0
+                    if (fileData):
+                        fileLen = len(fileData)
+                    cl['conn'].send(struct.pack("!i",len(msg['msg'])))  # send text segment length
+                    cl['conn'].send(struct.pack("!i",fileLen))          # send extra data length
+                    cl['conn'].send(bytes(msg['msg'], 'UTF-8'))         # send text
+                    if (fileData):
+                        cl['conn'].send(fileData)                       # send extra
         except BaseException as e:
             print (str(e))
 
