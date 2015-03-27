@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8bf2cfb6-0b60-462a-9948-f70ae9161f92" name="Default" comment="tcp client: add support files transfer">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/engine/conf.py" afterPath="$PROJECT_DIR$/engine/conf.py" />
+    <list default="true" id="8bf2cfb6-0b60-462a-9948-f70ae9161f92" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/handlers/h_gpio.py" afterPath="$PROJECT_DIR$/handlers/h_gpio.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -86,8 +85,8 @@
       <file leaf-file-name="h_gpio.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/handlers/h_gpio.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27884614" vertical-offset="695" max-vertical-offset="2160">
-              <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6826923" vertical-offset="1715" max-vertical-offset="2235">
+              <caret line="138" column="47" selection-start-line="138" selection-start-column="47" selection-end-line="138" selection-end-column="47" />
               <folding>
                 <element signature="e#125#141#0" expanded="true" />
               </folding>
@@ -140,8 +139,8 @@
         <option value="$PROJECT_DIR$/handlers/h_camera.py" />
         <option value="$PROJECT_DIR$/controllers/c_tcp_server.py" />
         <option value="$PROJECT_DIR$/engine/conf.py" />
-        <option value="$PROJECT_DIR$/handlers/h_gpio.py" />
         <option value="$PROJECT_DIR$/config.cfg" />
+        <option value="$PROJECT_DIR$/handlers/h_gpio.py" />
       </list>
     </option>
   </component>
@@ -561,7 +560,13 @@
       <option name="project" value="LOCAL" />
       <updated>1427287739959</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="conf added status&#10;gpio added restoring ports val at boot">
+      <created>1427445268348</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1427445268348</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -570,6 +575,7 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22836539" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32932693" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -582,7 +588,6 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34014422" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -613,7 +618,8 @@
     <MESSAGE value="tcp serv fix" />
     <MESSAGE value="gpio magic word change" />
     <MESSAGE value="tcp client: add support files transfer" />
-    <option name="LAST_COMMIT_MESSAGE" value="tcp client: add support files transfer" />
+    <MESSAGE value="conf added status&#10;gpio added restoring ports val at boot" />
+    <option name="LAST_COMMIT_MESSAGE" value="conf added status&#10;gpio added restoring ports val at boot" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -998,8 +1004,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/handlers/h_gpio.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27884614" vertical-offset="695" max-vertical-offset="2160">
-          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6826923" vertical-offset="1715" max-vertical-offset="2235">
+          <caret line="138" column="47" selection-start-line="138" selection-start-column="47" selection-end-line="138" selection-end-column="47" />
           <folding>
             <element signature="e#125#141#0" expanded="true" />
           </folding>

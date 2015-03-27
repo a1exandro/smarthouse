@@ -18,6 +18,9 @@ class h_gpio(base_hndl.baseHndl):
     runn = 0
     cId = 0
 
+    VAL_OFF = 1
+    VAL_ON = 0
+
     def __init__(self,callback,id):
         super().__init__()
         self.cb = callback
@@ -135,5 +138,7 @@ class h_gpio(base_hndl.baseHndl):
                 GPIO.setup(sens['addr'],GPIO.OUT)
                 if str(sens['addr']) in status:
                     GPIO.output(sens['addr'],status[sens['addr']])
+                else:
+                    GPIO.output(sens['addr'], self.VAL_OFF)
         except BaseException as e:
             print (e)
