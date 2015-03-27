@@ -81,6 +81,12 @@ class h_gpio(base_hndl.baseHndl):
                     jdata['addr'] = p
                     if len(cmd) == 5 and cmd[3] == '=': # set pin
                         GPIO.output(p,int(cmd[4]))
+                        if len(conf.getModuleStatus()):
+                            status = json.loads(conf.getModuleStatus())
+                        else:
+                            status = {}
+                        status[p] = int(cmd[4])
+                        conf.setModuleStatus(json.dumps(status))
                         jdata['data'] = GPIO.input(p)
                         data['msg']['msg'] = json.dumps(jdata)
                         self.send(data['msg'])
@@ -119,6 +125,15 @@ class h_gpio(base_hndl.baseHndl):
         self.cb(base_hndl.ev_rcv,msg)
 
     def onModuleCfgChanged(self):
-        cfg = json.loads(conf.getModuleCfg())
-        for sens in cfg['switches']:
-            GPIO.setup(sens['addr'],GPIO.OUT)
+        try:
+            cfg = json.loads(conf.getModuleCfg())
+            if len(conf.getModuleStatus()):
+                status = json.loads(conf.getModuleStatus())
+            else:
+                status = {}
+            for sens in cfg['switches']:
+                GPIO.setup(sens['addr'],GPIO.OUT)
+                if str(sens['addr']) in status:
+                    GPIO.output(sens['addr'],status[sens['addr']])
+        except BaseException as e:
+            print (e)

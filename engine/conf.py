@@ -35,6 +35,16 @@ def getModuleCfg():
     m_name = inspect.getmodulename(s[1][1])
     return get(m_name,'configs')
 
+def getModuleStatus():
+    s = inspect.stack()
+    m_name = inspect.getmodulename(s[1][1])
+    return get(m_name,'statuses')
+
+def setModuleStatus(val):
+    s = inspect.stack()
+    m_name = inspect.getmodulename(s[1][1])
+    set(m_name,val,'statuses')
+
 def close():
     try:
         with open(globals.cfg['cfg_path'], 'w') as configfile:
