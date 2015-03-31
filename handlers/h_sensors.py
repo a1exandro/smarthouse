@@ -87,7 +87,11 @@ class h_sensors(base_hndl.baseHndl):
             elif (cmd[1] == 'set'):
                 if (cmd[2] == 'cfg'):
                     conf.setModuleCfg(' '.join(cmd[3:]))
-                    self.onModuleCfgChanged();
+                    self.onModuleCfgChanged()
+                    jdata['type'] = 'cfg'
+                    jdata['data'] = conf.getModuleCfg()
+                    data['msg']['msg'] = json.dumps(jdata)
+                    self.send(data['msg'])
 
         except BaseException as e:
             data['msg']['msg'] = str(e)

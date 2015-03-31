@@ -78,6 +78,11 @@ class h_gpio(base_hndl.baseHndl):
                     self.send(data['msg'])
                 elif (cmd[2] == 'cfg'):
                     conf.setModuleCfg(' '.join(cmd[3:]))
+                    self.onModuleCfgChanged()
+                    jdata['type'] = 'cfg'
+                    jdata['data'] = conf.getModuleCfg()
+                    data['msg']['msg'] = json.dumps(jdata)
+                    self.send(data['msg'])
                 else:
                     p = int(cmd[2][1:])
                     jdata['type'] = 'port_val'

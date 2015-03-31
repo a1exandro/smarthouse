@@ -56,6 +56,10 @@ class h_camera(base_hndl.baseHndl):
             if cmd[1] == 'set':
                 if (cmd[2] == 'cfg'):
                     conf.setModuleCfg(' '.join(cmd[3:]))
+                    jdata['type'] = 'cfg'
+                    jdata['data'] = conf.getModuleCfg()
+                    data['msg']['msg'] = json.dumps(jdata)
+                    self.send(data['msg'])
             elif (cmd[1] == 'get'):
                 if (cmd[2] == 'cfg'):
                     cfg = conf.getModuleCfg()
