@@ -23,8 +23,6 @@ class System:
         self.ctrlEng = ctrls.ctrls(self.onControllerMessage,self.onCtrlCommand)
         self.ctrlEng.loadMods(self.cfg['mod_dir'])
 
-        self.clearTmp()
-
         while (self.runn):
             time.sleep(1)
 
@@ -76,11 +74,5 @@ class System:
         except BaseException as e:
             print (str(e))
 
-    def clearTmp(self):
-        try:
-            for files in os.listdir('./tmp'):
-                os.remove('./tmp/'+files)
-        except BaseException as e:
-            print (str(e))
 
 

@@ -73,15 +73,12 @@ class h_camera(base_hndl.baseHndl):
                     jdata['type'] = 'picture'
                     jdata['addr'] = p
                     if len(cmd) >= 3:
-                        #jdata['data'] = GPIO.input(p)
                         resolution = '640x480'
                         if len(cmd) == 4: resolution = cmd[3]
                         data['msg']['args'] = {}
                         data['msg']['args']['files'] = self.getPicture(p,resolution)
                         jdata['resolution'] = resolution
                         jdata['fname'] = data['msg']['args']['files']
-                        #pic = open("/home/alex/hello",'rb')
-                        #jdata['data'] = pic.read()
                         data['msg']['msg'] = json.dumps(jdata)
                         self.send(data['msg'])
         except BaseException as e:
@@ -91,9 +88,9 @@ class h_camera(base_hndl.baseHndl):
     def getPicture(self,port,resolution):
         res = []
         try:
-            tm = time.time()
-            fname = './tmp/came-%s-%s-%s-%d.jpg'%(port,self.board_id,resolution,tm)
-            cmd = 'fswebcam --save %s -r %s'%(fname,resolution)
+            tm = 0#time.time() # just overwrite last file
+            fname = '/tmp/smarthouse/came-%s-%s-%s-%d.jpg'%(port,self.board_id,resolution,tm)
+            cmd = 'fswebcam --save %s -d /dev/video%s -r %s'%(port,fname,resolution)
 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             out, err = p.communicate()
