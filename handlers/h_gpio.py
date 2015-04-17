@@ -78,22 +78,17 @@ class h_gpio(base_hndl.baseHndl):
                     self.send(data['msg'])
                 elif (cmd[2] == 'cfg'):
                     conf.setModuleCfg(' '.join(cmd[3:]))
-                    self.onModuleCfgChanged()
-                    jdata['type'] = 'cfg'
-                    jdata['data'] = conf.getModuleCfg()
-                    data['msg']['msg'] = json.dumps(jdata)
-                    self.send(data['msg'])
                 else:
                     p = int(cmd[2][1:])
                     jdata['type'] = 'port_val'
                     jdata['addr'] = p
                     if len(cmd) == 5 and cmd[3] == '=': # set pin
                         GPIO.output(p,int(cmd[4]))
+                        status = {}
                         if len(conf.getModuleStatus()):
                             status = json.loads(conf.getModuleStatus())
-                        else:
-                            status = {}
-                        status[p] = int(cmd[4])
+                            
+                        status[str(p)] = int(cmd[4])
                         conf.setModuleStatus(json.dumps(status))
                         jdata['data'] = GPIO.input(p)
                         data['msg']['msg'] = json.dumps(jdata)
@@ -135,15 +130,16 @@ class h_gpio(base_hndl.baseHndl):
     def onModuleCfgChanged(self):
         try:
             cfg = json.loads(conf.getModuleCfg())
+            status = {}
             if len(conf.getModuleStatus()):
                 status = json.loads(conf.getModuleStatus())
-            else:
-                status = {}
             for sens in cfg['switches']:
                 GPIO.setup(sens['addr'],GPIO.OUT)
                 if str(sens['addr']) in status:
-                    GPIO.output(sens['addr'],status[sens['addr']])
+                    GPIO.output(sens['addr'],int(status[str(sens['addr'])]))
+                    print ('set default val for port ' + str(sens['addr']) + ': '+str( status[str(sens['addr'])] ) )
                 else:
                     GPIO.output(sens['addr'], self.VAL_OFF)
+                    print ('set default val = VAL_OFF for port ' + str(sens['addr']))
         except BaseException as e:
             print (e)

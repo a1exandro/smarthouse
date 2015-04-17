@@ -66,7 +66,7 @@ class http(base_ctrl.baseCtrl):
                 recv = self.send({})
                 #if time.time() - self.lastReq < self.sleep_time:    # если ждали меньше sleep_time, значит был ответ или ошибка
                 if recv != 1:                                    # если ждали меньше и нет ответа - ошибка, тогда спим, во избежании флуда
-                    time.sleep(self.sleep_time*10)
+                    time.sleep(self.sleep_time)
         except BaseException as e:
             print (str(e))
 

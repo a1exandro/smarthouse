@@ -29,6 +29,7 @@ def setModuleCfg(val):
     s = inspect.stack()
     m_name = inspect.getmodulename(s[1][1])
     set(m_name,val,'configs')
+    save()
 
 def getModuleCfg():
     s = inspect.stack()
@@ -44,6 +45,7 @@ def setModuleStatus(val):
     s = inspect.stack()
     m_name = inspect.getmodulename(s[1][1])
     set(m_name,val,'statuses')
+    save()
 
 def close():
     try:

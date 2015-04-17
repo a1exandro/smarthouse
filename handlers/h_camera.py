@@ -90,7 +90,7 @@ class h_camera(base_hndl.baseHndl):
         try:
             tm = 0#time.time() # just overwrite last file
             fname = '/tmp/smarthouse/came-%s-%s-%s-%d.jpg'%(port,self.board_id,resolution,tm)
-            cmd = 'fswebcam --save %s -d /dev/video%s -r %s'%(port,fname,resolution)
+            cmd = 'fswebcam --save %s -d /dev/video%s -r %s -S 5'%(fname,port,resolution)
 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             out, err = p.communicate()
