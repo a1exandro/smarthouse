@@ -1,5 +1,5 @@
 __author__ = 'a1ex!'
-__version__ = '1.0'
+__version__ = '1.1'
 
 inf = {'version':__version__,'author':__author__}
 commands = ['sensors']
@@ -133,7 +133,7 @@ class h_sensors(base_hndl.baseHndl):
                 sensData = f.read()
                 f.close()
 
-                temp = re.findall(r't=([0-9]+)', sensData, re.DOTALL)
+                temp = re.findall(r't=(-?[0-9]+)', sensData, re.DOTALL)
 
                 if len(temp):
                     t = float(temp[0])/1000
