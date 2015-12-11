@@ -139,7 +139,7 @@ class h_sensors(base_hndl.baseHndl):
                     t = float(temp[0])/1000
         except:
             t = 0
-        data = {'addr':addr,'data':t}
+        data = {'addr':addr,'data':round(t,1)}
         data['type'] = 'T'
         return json.dumps(data)
 
