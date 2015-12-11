@@ -64,12 +64,13 @@ class emailer(base_ctrl.baseCtrl):
         print ('Stopping EMAIL controller...')
 
     def keepAlive(self):
-        try:
-            while self.runn:
+        while self.runn:
+            try:
                 self.check()
-                time.sleep(self.sleep_time)
-        except BaseException as e:
-            print (str(e))
+            except BaseException as e:
+                print ('email check error: ',str(e))
+            time.sleep(self.sleep_time)
+        
 
     def onRecv(self,data):
         args = {'cId':self.cId,'uId':'0','msg':data,'type':'text_cmd'}
