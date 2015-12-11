@@ -1,5 +1,5 @@
 __author__ = 'a1ex!'
-__version__ = '1.1'
+__version__ = '1.2'
 
 inf = {'version':__version__,'author':__author__}
 commands = ['sensors']
@@ -139,7 +139,7 @@ class h_sensors(base_hndl.baseHndl):
                     t = float(temp[0])/1000
         except:
             t = 0
-        data = {'addr':addr,'data':round(t,1)}
+        data = {'addr':addr,'data':round(t, 1)}
         data['type'] = 'T'
         return json.dumps(data)
 
